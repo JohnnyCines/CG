@@ -64,6 +64,12 @@ void drawAxis() {
 	glEnd();
 }
 
+void camera(float pX, float pY, float pZ, float lX, float lY, float lZ, float uX, float uY, float uZ) {
+	gluLookAt(pX, pY, pZ,
+		lX, lY, lZ,
+		uX, uY, uZ);
+}
+
 void renderScene(void) {
 
 	// clear buffers
@@ -71,10 +77,12 @@ void renderScene(void) {
 
 	// set the camera
 	glLoadIdentity();
-	gluLookAt(5.0,5.0,5.0, 
-		      0.0,0.0,0.0,
-			  0.0f,1.0f,0.0f);
-
+	/*
+	gluLookAt(5.0, 5.0, 5.0,
+		0.0, 0.0, 0.0,
+		0.0f, 1.0f, 0.0f);
+	*/
+	camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
 	drawAxis();
 
 	glBegin(GL_TRIANGLES);
@@ -111,7 +119,7 @@ void readFile(string fname) {
 			line.erase(0, pos + 1);
 			z = std::stof(line, &pos);
 
-			struct Coords Aux;
+			struct Coords Aux {};
 			Aux.xx = x;
 			Aux.yy = y;
 			Aux.zz = z;
@@ -122,107 +130,113 @@ void readFile(string fname) {
 	file.close();
 }
 
+
+
+
+float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ;
+
 void readXML(string f_path) {
-	XMLDocument xmlDoc;
-	XMLElement* element;
+	XMLDocument doc;
 
-	if (!(xmlDoc.LoadFile(f_path.c_str()))) {
+	if (doc.LoadFile(f_path) != XML_SUCCESS) {
+		printf("Ocorreu um erro na leitura do ficheiro XML\n");
+		return 1;
+	}
 
-		element = xmlDoc.FirstChildElement();
-		for (element = element->FirstChildElement(); element; element = element->NextSiblingElement()) {
-			string ficheiro = element->Attribute("file");
-			readFile(ficheiro);
+	XMLNode* root = doc.FirstChild();
+
+	if (strcmp("world", root->Value()) != 0) {
+		printf("Esperado valor 'world', obtido %s\n", root->Value());
+		return 1;
+	}
+
+	if (root->NoChildren()) {
+		printf("Não contém dados\n");
+		return 1;
+	}
+
+	XMLNode* camera = root->FirstChild();
+
+	if (strcmp("camera", camera->Value()) != 0) {
+		printf("Esperado valor 'camera', obtido %s\n", camera->Value());
+		return 1;
+	}
+
+	if (camera->NoChildren()) {
+		printf("Não contém definiçoes da camara\n");
+		return 1;
+	}
+
+	XMLNode* setting = camera->FirstChild();
+
+	while (setting != nullptr) {
+
+		XMLElement *element = setting->ToElement();
+
+		if (strcmp("positon", setting->Value()) == 0){
+			posX = atof(element->Atribute("x"));
+			posY = atof(element->Atribute("y"));
+			posZ = atof(element->Atribute("z"));
 		}
+
+		if (strcmp("lookAt", setting->Value()) == 0) {
+			lookX = atof(element->Atribute("x"));
+			lookY = atof(element->Atribute("y"));
+			lookZ = atof(element->Atribute("z"));
+		}
+
+		if (strcmp("up", setting->Value()) == 0) {
+			upX = atof(element->Atribute("x"));
+			upY = atof(element->Atribute("y"));
+			upZ = atof(element->Atribute("z"));
+		}
+
+		setting = setting->nextSibling();
 	}
-	else {
-		printf("XML File %s could not be found", f_path.c_str());
+
+	XMLNode* group = root->nextSibling();
+
+	if (strcmp("group", group->Value()) != 0) {
+		printf("Esperado valor 'group', obtido %s\n", group->Value());
+		return 1;
 	}
+
+	if (group->NoChildren()) {
+		printf("Não há dados de models\n");
+		return 1;
+	}
+
+	XMLNode* models = group.FirstChild();
+
+	if (strcmp("models", models->Value()) != 0) {
+		printf("Esperado valor 'models', obtido %s\n", models->Value());
+		return 1;
+	}
+
+	if (model->NoChildren()) {
+		printf("Não há dados de models\n");
+		return 1;
+	}
+
+	XMLNode* model = models->FirstChild();
+
+	while (model != nullptr) {
+		XMLElement* element = model->ToElement();
+
+		if (strcmp("model", model->Value()) != 0) {
+			cerr << "Esperado valor 'model', obtido '" << model->Value() << "'" << endl;
+			return 1;
+		}
+
+		string ficheiro = element->Attribute("file");
+		readfile(ficheiro);
+
+		model = model->NextSibling();
+	}
+
 }
 
-/*
-// write function to process keyboard events
-void keys(unsigned char key, int x, int y) {
-	switch (key) {
-		case 'w':
-			zz -= 0.05f;
-			glutPostRedisplay();
-			break;
 
-		case 's':
-			zz += 0.05f;
-			glutPostRedisplay();
-			break;
-
-		case 'a':
-			xx -= 0.05f;
-			glutPostRedisplay();
-			break;
-
-		case 'd':
-			xx += 0.05f;
-			glutPostRedisplay();
-			break;
-
-		case 'q':
-			angle += 0.5f;
-			glutPostRedisplay();
-			break;
-
-		case 'e':
-			angle -= 0.5f;
-			glutPostRedisplay();
-			break;
-
-		case ' ':
-			xx = 0.0f;
-			yy = 0.0f;
-			zz = 0.0f;
-			angle = 0.0f;
-			sy = 1.0f;
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glutPostRedisplay();
-			break;
-		
-		default:
-			break;
-	}
-}
-*/
-
-/*
-void skeys(int key_code, int x, int y){
-	switch (key_code) {
-
-		case GLUT_KEY_DOWN:
-			sy -= 0.1f;
-			glutPostRedisplay();
-			break;
-
-		case GLUT_KEY_UP:
-			sy += 0.1f;
-			glutPostRedisplay();
-			break;
-
-		case GLUT_KEY_F1:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-			glutPostRedisplay();
-			break;
-
-		case GLUT_KEY_F2:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-			glutPostRedisplay();
-			break;
-
-		case GLUT_KEY_F3:
-			glPolygonMode(GL_FRONT_AND_BACK, GL_POINT);
-			glutPostRedisplay();
-			break;
-
-		default:
-			break;
-	}
-}
-*/
 
 int main(int argc, char **argv) {
 
@@ -231,17 +245,19 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
 	glutInitWindowPosition(80,80);
 	glutInitWindowSize(1500,1000);
-	glutCreateWindow("CG@DI-UM");
-		
+	glutCreateWindow("Engine - Phase 1");
+	
+	if (argc != 2) {
+		printf("Invalid input");
+		return 0;
+	}
+	else {
+		readXML(argv[1]);
+	}
+
 // Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
-
-	
-// put here the registration of the keyboard callbacks
-	//glutKeyboardFunc(keys);
-	//glutSpecialFunc(skeys);
-
 
 //  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
