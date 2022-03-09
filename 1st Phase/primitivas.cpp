@@ -114,77 +114,81 @@ void caixa(float dimension, float divisions, char *fname){
 }
 
 
-void esfera(float r, int slices, int stacks, char *fname){
-    
-    float a,b
-    float sl = 2.0f * M_PI / float(slices), st = M_PI / float(stacks);
-    float px1,px2,px3,px4,py1,py2,pz1,pz2,pz3,pz4;
-    
-    for (a = 0.0f; a <= 2 * M_PI; a += sl) {
+void esfera(float r, int slices, int stacks, char* fname) {
+	
+	File *f = fopen(fname, "w");
+
+	float a, b;
+	float sl = 2.0f * M_PI / float(slices), st = M_PI / float(stacks);
+	float px1, px2, px3, px4, py1, py2, pz1, pz2, pz3, pz4;
+
+	for (a = 0.0f; a <= 2 * M_PI; a += sl) {
 		for (b = -M_PI / 2.0f; b < M_PI / 2.0f; b += st) {
 
 			if (a >= M_PI / 2.0f && a <= 3.0f * M_PI / 2.0f) {
 				//triangulos que nao se veem
-                px1 = r * cos(b) * sin(a);
-                px2 = r * cos(b) * sin(a + sl);
-                px3 = r * cos(b + st) * sin(a);
-                px4 = r * cos(b + st) * sin(a + sl)
-                
-                py1 = r * sin(b);
-                py2 = r * sin(b + st);
-                
-                pz1 = r * cos(b) * cos(a);
-                pz2 = r * cos(b) * cos(a + sl);
-                pz3 = r * cos(b + st) * cos(a);
-                pz4 = r * cos(b + st) * cos(a + sl);
-                
+				px1 = r * cos(b) * sin(a);
+				px2 = r * cos(b) * sin(a + sl);
+				px3 = r * cos(b + st) * sin(a);
+				px4 = r * cos(b + st) * sin(a + sl);
+
+				py1 = r * sin(b);
+				py2 = r * sin(b + st);
+
+				pz1 = r * cos(b) * cos(a);
+				pz2 = r * cos(b) * cos(a + sl);
+				pz3 = r * cos(b + st) * cos(a);
+				pz4 = r * cos(b + st) * cos(a + sl);
+
 				//glVertex3f(r * cos(b) * sin(a), r * sin(b), r * cos(b) * cos(a));
 				//glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
 				//glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
-                
-                fprintf(f, %f %f %f, px1, py1, pz1); 
-                fprintf(f, %f %f %f, px2, py1, pz2);
-                fprintf(f, %f %f %f, px3, py2, pz3);
+
+				fprintf(f, %f %f %f, px1, py1, pz1);
+				fprintf(f, %f %f %f, px2, py1, pz2);
+				fprintf(f, %f %f %f, px3, py2, pz3);
 
 				//glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
 				//glVertex3f(r * cos(b + st) * sin(a + sl), r * sin(b + st), r * cos(b + st) * cos(a + sl));
 				//glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
-                
-                fprintf(f, %f %f %f, px2, py1, pz2); 
-                fprintf(f, %f %f %f, px4, py2, pz4);
-                fprintf(f, %f %f %f, px3, py2, pz3);
+
+				fprintf(f, %f %f %f, px2, py1, pz2);
+				fprintf(f, %f %f %f, px4, py2, pz4);
+				fprintf(f, %f %f %f, px3, py2, pz3);
 			}
 			else {
 				//triangulos visiveis
-                px1 = r * cos(b) * sin(a);
-                px2 = r * cos(b) * sin(a + sl);
-                px3 = r * cos(b + st) * sin(a);
-                px4 = r * cos(b + st) * sin(a + sl);
-                
-                py1 = r * sin(b);
-                py2 = r * sin(b + st);
-                
-                pz1 = r * cos(b) * cos(a);
-                pz2 = r * cos(b) * cos(a + sl);
-                pz3 = r * cos(b + st) * cos(a);
-                pz4 = r * cos(b + st) * cos(a + sl);
-                
+				px1 = r * cos(b) * sin(a);
+				px2 = r * cos(b) * sin(a + sl);
+				px3 = r * cos(b + st) * sin(a);
+				px4 = r * cos(b + st) * sin(a + sl);
+
+				py1 = r * sin(b);
+				py2 = r * sin(b + st);
+
+				pz1 = r * cos(b) * cos(a);
+				pz2 = r * cos(b) * cos(a + sl);
+				pz3 = r * cos(b + st) * cos(a);
+				pz4 = r * cos(b + st) * cos(a + sl);
+
 				//glVertex3f(r * cos(b) * sin(a), r * sin(b), r * cos(b) * cos(a));
 				//glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
 				//glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
-                
-                fprintf(f, %f %f %f, px1, py1, pz1); 
-                fprintf(f, %f %f %f, px2, py1, pz2);
-                fprintf(f, %f %f %f, px3, py2, pz3);
+
+				fprintf(f, %f %f %f, px1, py1, pz1);
+				fprintf(f, %f %f %f, px2, py1, pz2);
+				fprintf(f, %f %f %f, px3, py2, pz3);
 
 				//glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
 				//glVertex3f(r * cos(b + st) * sin(a + sl), r * sin(b + st), r * cos(b + st) * cos(a + sl));
 				//glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
-                
-                fprintf(f, %f %f %f, px2, py1, pz2); 
-                fprintf(f, %f %f %f, px4, py2, pz4);
-                fprintf(f, %f %f %f, px3, py2, pz3);
-                }
-        }
-    }
+
+				fprintf(f, %f %f %f, px2, py1, pz2);
+				fprintf(f, %f %f %f, px4, py2, pz4);
+				fprintf(f, %f %f %f, px3, py2, pz3);
+			}
+		}
+	}
+
+	fclose(f);
 }
