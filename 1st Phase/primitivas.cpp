@@ -121,11 +121,15 @@ void esfera(float r, int slices, int stacks, char* fname) {
 	float a, b;
 	float sl = 2.0f * M_PI / float(slices), st = M_PI / float(stacks);
 	float px1, px2, px3, px4, py1, py2, pz1, pz2, pz3, pz4;
-
+	
+	//alfa (angulo formado por xx e zz) vai de 0 a 2*pi
 	for (a = 0.0f; a <= 2 * M_PI; a += sl) {
+		
+		//beta (angulo formado por plano xz e yy) vai de -pi/2 a pi/2
 		for (b = -M_PI / 2.0f; b < M_PI / 2.0f; b += st) {
 
 			if (a >= M_PI / 2.0f && a <= 3.0f * M_PI / 2.0f) {
+				
 				//triangulos que nao se veem
 				px1 = r * cos(b) * sin(a);
 				px2 = r * cos(b) * sin(a + sl);
@@ -157,6 +161,7 @@ void esfera(float r, int slices, int stacks, char* fname) {
 				fprintf(f, %f %f %f, px3, py2, pz3);
 			}
 			else {
+				
 				//triangulos visiveis
 				px1 = r * cos(b) * sin(a);
 				px2 = r * cos(b) * sin(a + sl);
