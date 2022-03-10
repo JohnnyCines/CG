@@ -1,3 +1,4 @@
+//#include <stdlib.h>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -9,10 +10,13 @@
 #include <math.h>
 #include <fstream>
 #include <iostream>
-
+/*
 #include "tinyxml/tinyxml2.h"
+#include "tinyxml/tinyxml2.cpp"
+*/
 
 using namespace std;
+//using namespace tinyxml2;
 using std::vector;
 
 
@@ -26,7 +30,47 @@ struct Coords
 
 vector<Coords> triangles;
 
+float alpha = 0.25;
+float beta = 0.5;
+float raio = 7.5;
+
+//float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ;
+
 //no need to change
+
+void processKeys(unsigned char c, int xx, int yy) {
+
+	// put code to process regular keys in here
+	switch (c) {
+	case 'w':
+		if (beta < 1.5f) {
+			beta += 0.25f;
+		}
+		glutPostRedisplay();
+		break;
+
+	case 'a':
+		alpha -= 0.2f;
+		glutPostRedisplay();
+		break;
+
+	case 's':
+		if (beta > -1.5f) {
+			beta -= 0.25f;
+		}
+		glutPostRedisplay();
+		break;
+
+	case 'd':
+		alpha += 0.2f;
+		glutPostRedisplay();
+		break;
+
+	}
+
+}
+
+
 void changeSize(int w, int h) {
 
 	if(h == 0)
@@ -64,11 +108,13 @@ void drawAxis() {
 	glEnd();
 }
 
+
 void camera(float pX, float pY, float pZ, float lX, float lY, float lZ, float uX, float uY, float uZ) {
 	gluLookAt(pX, pY, pZ,
-		lX, lY, lZ,
-		uX, uY, uZ);
+				lX, lY, lZ,
+				uX, uY, uZ);
 }
+
 
 void renderScene(void) {
 
@@ -77,15 +123,16 @@ void renderScene(void) {
 
 	// set the camera
 	glLoadIdentity();
-	/*
-	gluLookAt(5.0, 5.0, 5.0,
-		0.0, 0.0, 0.0,
-		0.0f, 1.0f, 0.0f);
-	*/
-	camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
-	drawAxis();
+	
+	gluLookAt(raio * cos(beta) * sin(alpha), raio * sin(beta), raio * cos(beta) * cos(alpha),
+				0.0, 0.0, 0.0,
+				0.0f, 1.0f, 0.0f);
+	
+	//camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
+	//drawAxis();
 
 	glBegin(GL_TRIANGLES);
+
 
 	for (int i = 0; i < triangles.size(); i += 3) {
 		glColor3f(1.0f, 1.0f, 1.0f);
@@ -130,18 +177,11 @@ void readFile(string fname) {
 	file.close();
 }
 
-
-
-
-float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ;
-
-void readXML(string f_path) {
+/*
+int readXML(char* f) {
 	XMLDocument doc;
 
-	if (doc.LoadFile(f_path) != XML_SUCCESS) {
-		printf("Ocorreu um erro na leitura do ficheiro XML\n");
-		return 1;
-	}
+	XMLError eResult = doc.LoadFile(f);
 
 	XMLNode* root = doc.FirstChild();
 
@@ -150,94 +190,91 @@ void readXML(string f_path) {
 		return 1;
 	}
 
-	if (root->NoChildren()) {
-		printf("Não contém dados\n");
+	if (root==nullptr) {
+		printf("Não há dados\n");
 		return 1;
 	}
 
-	XMLNode* camera = root->FirstChild();
+	XMLNode* camera = root->FirstChildElement("camera");
 
 	if (strcmp("camera", camera->Value()) != 0) {
 		printf("Esperado valor 'camera', obtido %s\n", camera->Value());
 		return 1;
 	}
 
-	if (camera->NoChildren()) {
-		printf("Não contém definiçoes da camara\n");
+	if (camera == nullptr) {
+		printf("Não há dados\n");
 		return 1;
 	}
 
-	XMLNode* setting = camera->FirstChild();
+	XMLNode* setting = camera->FirstChildElement();
 
 	while (setting != nullptr) {
 
 		XMLElement *element = setting->ToElement();
 
 		if (strcmp("positon", setting->Value()) == 0){
-			posX = atof(element->Atribute("x"));
-			posY = atof(element->Atribute("y"));
-			posZ = atof(element->Atribute("z"));
+			posX = atof(element->Attribute("x"));
+			posY = atof(element->Attribute("y"));
+			posZ = atof(element->Attribute("z"));
 		}
 
 		if (strcmp("lookAt", setting->Value()) == 0) {
-			lookX = atof(element->Atribute("x"));
-			lookY = atof(element->Atribute("y"));
-			lookZ = atof(element->Atribute("z"));
+			lookX = atof(element->Attribute("x"));
+			lookY = atof(element->Attribute("y"));
+			lookZ = atof(element->Attribute("z"));
 		}
 
 		if (strcmp("up", setting->Value()) == 0) {
-			upX = atof(element->Atribute("x"));
-			upY = atof(element->Atribute("y"));
-			upZ = atof(element->Atribute("z"));
+			upX = atof(element->Attribute("x"));
+			upY = atof(element->Attribute("y"));
+			upZ = atof(element->Attribute("z"));
 		}
 
-		setting = setting->nextSibling();
+		setting = setting->NextSiblingElement();
 	}
 
-	XMLNode* group = root->nextSibling();
+	XMLNode* group = root->FirstChildElement("group");
 
 	if (strcmp("group", group->Value()) != 0) {
 		printf("Esperado valor 'group', obtido %s\n", group->Value());
 		return 1;
 	}
 
-	if (group->NoChildren()) {
-		printf("Não há dados de models\n");
+	if (group == nullptr) {
+		printf("Não há dados\n");
 		return 1;
 	}
 
-	XMLNode* models = group.FirstChild();
+	XMLNode* models = group->FirstChildElement("models");
 
 	if (strcmp("models", models->Value()) != 0) {
 		printf("Esperado valor 'models', obtido %s\n", models->Value());
 		return 1;
 	}
 
-	if (model->NoChildren()) {
-		printf("Não há dados de models\n");
+	if (models == nullptr) {
+		printf("Não há dados\n");
 		return 1;
 	}
 
-	XMLNode* model = models->FirstChild();
+	tinyxml2::XMLNode* model = models->FirstChildElement("model");
 
 	while (model != nullptr) {
-		XMLElement* element = model->ToElement();
+		tinyxml2::XMLElement* element = model->ToElement();
 
 		if (strcmp("model", model->Value()) != 0) {
-			cerr << "Esperado valor 'model', obtido '" << model->Value() << "'" << endl;
+			printf("Esperado valor 'model', obtido %s\n", model->Value());
 			return 1;
 		}
 
 		string ficheiro = element->Attribute("file");
-		readfile(ficheiro);
+		readFile(ficheiro);
 
-		model = model->NextSibling();
+		model = model->NextSiblingElement();
 	}
-
-}
-
-
-
+	return 0;
+}*/
 int main(int argc, char **argv) {
 
 // init GLUT and the window
@@ -247,17 +284,21 @@ int main(int argc, char **argv) {
 	glutInitWindowSize(1500,1000);
 	glutCreateWindow("Engine - Phase 1");
 	
-	if (argc != 2) {
+	/*
+	if (argc != 3) {
 		printf("Invalid input");
 		return 0;
 	}
 	else {
-		readXML(argv[1]);
+		readFile(argv[1]);
+		//readFile(argv[2]);
 	}
-
+	*/
 // Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
+
+	glutKeyboardFunc(processKeys);
 
 //  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
