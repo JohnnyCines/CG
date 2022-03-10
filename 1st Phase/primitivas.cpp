@@ -18,15 +18,15 @@ void plano(float length, float divisions, char* fname) {
         while (x != length / 2) {
 
             //guardar triângulos
-            fprintf(f, "%f %f %f", x, 0.0, z);
-
+            fprintf(f, %f %f %f, x, 0.0, z); 
             //linhas trocadas
-            fprintf(f, "%f %f %f", x + lq, 0.0, z - lq);
-            fprintf(f, "%f %f %f", x, 0.0, z - lq);
+            fprintf(f, %f %f %f, x, 0.0, z-lq);
+            fprintf(f, %f %f %f, x+lq, 0.0, z-lq);
 
-            fprintf(f, "%f %f %f", x, 0.0, z);
-            fprintf(f, "%f %f %f", x + lq, 0.0, z);
-            fprintf(f, "%f %f %f", x + lq, 0.0, z - lq);
+            fprintf(f, %f %f %f, x, 0.0, z);
+            fprintf(f, %f %f %f, x+lq, 0.0, z-lq);
+            fprintf(f, %f %f %f, x+lq, 0.0, z);
+
 
             x += lq; //incrementar x para o próximo ponto
         }
