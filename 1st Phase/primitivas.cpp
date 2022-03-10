@@ -194,14 +194,19 @@ void esfera(float r, int slices, int stacks, char* fname) {
 void cone(float radius, float height, int slices, int stacks){
     float alfa =  0.0;
     float beta,newheight;
+    //distância ângular de cada ponto nos eixos xz
     float alfastep = 2*M_PI/slices;
+    //diferença de raio entre cada stack
     float betastep = radius/stacks;
+    //distância entre cada ponto no eixo y
     float newheightstep = height/stacks;
     File * f = fopen(fname, "w");
+    //coordenadas polares
     float px1,py1,pz1,px2,py2,pz2,px3,py3,pz3,px4,py4,pz4;
 
     int slice, stack;
     for(slice=0; slice<slices++;slice++){
+        //coordenadas da base
         px1 = radius * sin(alfa);
         pz1 = radius * cos(alfa);
 
@@ -217,6 +222,7 @@ void cone(float radius, float height, int slices, int stacks){
         newheight = 0.0
 
         for(stack=0;stack<stacks;stack++){
+            //coordenadas da face lateral 
             px1 = beta * sin(alfa);
             py1 = newheight; 
             pz1 = beta * cos(alfa);
