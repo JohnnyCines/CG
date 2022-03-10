@@ -37,95 +37,108 @@ void plano(float length, float divisions, char* fname) {
     fclose(f);
 }
 
-void caixa(float length, float divisions, char* fname) {
-    FILE* f;
-    fopen_s(&f, fname, "w");
+void caixa(float dimension, float divisions, char *fname){
+    File *f = fopen(fname, "w");
 
     //diferença entre cada ponto
-    float lq = length / divisions;
+    float lq = length/divisions
 
     //ponto de partida nos extremos de y
-    float x = -length / 2;
-    float z = length / 2;
-    float y = -length / 2;
-
+    float x = -length/2;
+    float z = length/2;
+    float y = length/2
     //cálculo dos triângulos nas duas faces nos extremos de y
-    while (y < length) {
-        while (z != -length / 2) {
-            while (x != length / 2) {
+    while(z!=-length/2){
+        while(x!= length/2){
+            //guardar triângulos
+            fprintf(f, %f %f %f, x, y, z);
+            fprintf(f, %f %f %f, x, y, z-lq);
+            fprintf(f, %f %f %f, x+lq, y, z-lq);
 
-                //guardar triângulos
-                fprintf(f, "%f %f %f", x, y, z);
-                fprintf(f, "%f %f %f", x, y, z - lq);
-                fprintf(f, "%f %f %f", x + lq, y, z - lq);
+            fprintf(f, %f %f %f, x, y, z);
+            fprintf(f, %f %f %f, x+lq, y, z-lq);
+            fprintf(f, %f %f %f, x+lq, y, z);
 
-                fprintf(f, "%f %f %f", x, y, z);
-                fprintf(f, "%f %f %f", x + lq, y, z);
-                fprintf(f, "%f %f %f", x + lq, y, z - lq);
+            //triângulos da face simétrica
+            fprintf(f, %f %f %f, x, -y, z);
+            fprintf(f, %f %f %f, x+lq, -y, z-lq);
+            fprintf(f, %f %f %f, x, -y, z-lq);
 
-                x += lq; //incrementar x para o próximo ponto
-            }
-            x = -length / 2; //reinicializar eixo dos x
-            z -= lq; //decrementar z para o próximo ponto
+            fprintf(f, %f %f %f, x, -y, z);
+            fprintf(f, %f %f %f, x+lq, -y, z-lq);
+            fprintf(f, %f %f %f, x+lq, -y, z);
+
+            x += lq; //incrementar x para o próximo ponto
         }
-        y += length; //incrementar y para o próximo extremo
+        x = -length/2; //reinicializar eixo dos x
+        z -= lq; //decrementar z para o próximo ponto
     }
 
     //ponto de partida nos extremos de z
-    x = -length / 2;
-    z = -length / 2;
-    y = -length / 2;
+    x = -length/2;
+    z = length/2;
+    y = -length/2;
 
     //cálculo dos triângulos nas duas faces nos extremos de z
-    while (z < length) {
-        while (y != length / 2) {
-            while (x != length / 2) {
+    while(y!=length/2){
+        while(x!= length/2){
+            //guardar triângulos
+            fprintf(f, %f %f %f, x, y, z); 
+            fprintf(f, %f %f %f, x, y+lq, z);
+            fprintf(f, %f %f %f, x+lq, y+lq, z);
 
-                //guardar triângulos
-                fprintf(f, "%f %f %f", x, y, z);
-                fprintf(f, "%f %f %f", x, y + lq, z);
-                fprintf(f, "%f %f %f", x + lq, y + lq, z);
+            fprintf(f, %f %f %f, x, y, z);
+            fprintf(f, %f %f %f, x+lq, y+lq, z);
+            fprintf(f, %f %f %f, x+lq, y, z);
 
-                fprintf(f, "%f %f %f", x, y, z);
-                fprintf(f, "%f %f %f", x + lq, y, z);
-                fprintf(f, "%f %f %f", x + lq, y + lq, z);
+            //triângulos da face oposta
+            fprintf(f, %f %f %f, x, y, -z); 
+            fprintf(f, %f %f %f, x+lq, y+lq, -z);
+            fprintf(f, %f %f %f, x, y+lq, -z);
 
-                x += lq; //incrementar x para o próximo ponto
-            }
-            x = -length / 2; //reinicializar eixo dos x
-            y += lq; //incrementar y para o próximo ponto
+            fprintf(f, %f %f %f, x, y, -z);
+            fprintf(f, %f %f %f, x+lq, y+lq, -z);
+            fprintf(f, %f %f %f, x+lq, y, -z);
+
+            x += lq; //incrementar x para o próximo ponto
         }
-        z += length; //incrementar z para o próximo extremo
+        x = -length/2; //reinicializar eixo dos x
+        y += lq; //incrementar y para o próximo ponto
     }
-
+    
     //ponto de partida nos extremos de x
-    x = -length / 2;
-    z = length / 2;
-    y = -length / 2;
+    x = length/2;
+    z = length/2;
+    y = length/2;
 
     //cálculo dos triângulos nas duas faces nos extremos de x
-    while (x < length) {
-        while (y != length / 2) {
-            while (z != -length / 2) {
+    
+    while(y!=length/2){
+        while(z!= -length/2){
+            //guardar triângulos
+            fprintf(f, %f %f %f, x, y, z); 
+            fprintf(f, %f %f %f, x, y, z-lq);
+            fprintf(f, %f %f %f, x, y-lq, z-lq);
 
-                //guardar triângulos
-                fprintf(f, "%f %f %f", x, y, z);
-                fprintf(f, "%f %f %f", x, y, z - lq);
-                fprintf(f, "%f %f %f", x, y + lq, z - lq);
+            fprintf(f, %f %f %f, x, y, z);
+            fprintf(f, %f %f %f, x, y-lq, z-lq);
+            fprintf(f, %f %f %f, x, y-lq, z);
 
-                fprintf(f, "%f %f %f", x, y, z);
-                fprintf(f, "%f %f %f", x, y + lq, z);
-                fprintf(f, "%f %f %f", x, y + lq, z - lq);
+            //triângulos da face simétrica
+            fprintf(f, %f %f %f, -x, y, z); 
+            fprintf(f, %f %f %f, -x, y-lq, z-lq);
+            fprintf(f, %f %f %f, -x, y, z-lq);
 
-                z -= lq; //decrementar z para o próximo ponto
-            }
-            z = length / 2; //reinicializar eixo do z
-            y += lq; //incrementar y para o próximo ponto
+            fprintf(f, %f %f %f, -x, y, z);
+            fprintf(f, %f %f %f, -x, y-lq, z);
+            fprintf(f, %f %f %f, x, y-lq, z-lq);
+
+            z -= lq; //decrementar z para o próximo ponto
         }
-        x += length; //incrementar x para o próximo extremo
+        z = length/2; //reinicializar eixo do z
+        y += lq; //incrementar y para o próximo ponto
     }
-
-    fclose(f);
+    fclose(f)    
 }
 
 void esfera(float r, int slices, int stacks, char* fname) {
@@ -175,5 +188,65 @@ void esfera(float r, int slices, int stacks, char* fname) {
         }
     }
 
+    fclose(f);
+}
+
+void cone(float radius, float height, int slices, int stacks){
+    float alfa =  0.0;
+    float beta,newheight;
+    float alfastep = 2*M_PI/slices;
+    float betastep = radius/stacks;
+    float newheightstep = height/stacks;
+    File * f = fopen(fname, "w");
+    float px1,py1,pz1,px2,py2,pz2,px3,py3,pz3,px4,py4,pz4;
+
+    int slice, stack;
+    for(slice=0; slice<slices++;slice++){
+        px1 = radius * sin(alfa);
+        pz1 = radius * cos(alfa);
+
+        px2 = radius * sin(alfa+alfastep);
+        pz2 = radius * cos(alfa+alfastep);
+
+        //triângulo da base
+        fprintf(f, "%f %f %f",0.0,-height/2,0.0);
+        fprintf(f, "%f %f %f",px1,y1,pz1);
+        fprintf(f, "%f %f %f",px2,y1,pz2);
+        
+        beta = radius;
+        newheight = 0.0
+
+        for(stack=0;stack<stacks;stack++){
+            px1 = beta * sin(alfa);
+            py1 = newheight; 
+            pz1 = beta * cos(alfa);
+
+            px2 = beta * sin(alfa+alfastep);
+            py2 = newheight;
+            pz2 = beta * cos(alfa+alfastep);
+            
+            beta -= betasetp;
+            newheight += newheightstep;
+
+            px3 = beta * sin(alfa);
+            py3 = newheight;
+            pz3 = beta * cos(alfa);
+
+            px4 = beta  * sin(alfa+alfastep);
+            py4 = newheight;
+            pz4 = beta * cos(alfa+alfastep);
+
+            //triângulos da face lateral
+            fprintf(f, "%f %f %f",px1,py1,pz1);
+            fprintf(f, "%f %f %f",px2,py2,pz2);
+            fprintf(f, "%f %f %f",px3,py3,pz3);
+
+            fprintf(f, "%f %f %f",px4,py4,pz4);
+            fprintf(f, "%f %f %f",px3,py3,pz3);
+            fprintf(f, "%f %f %f",px2,py2,pz2);
+
+        }
+        alfa+=alfastep;
+    }
     fclose(f);
 }
