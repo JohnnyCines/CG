@@ -10,6 +10,7 @@
 #include <math.h>
 #include <fstream>
 #include <iostream>
+
 /*
 #include "tinyxml/tinyxml2.h"
 #include "tinyxml/tinyxml2.cpp"
@@ -19,7 +20,7 @@ using namespace std;
 //using namespace tinyxml2;
 using std::vector;
 
-
+//struct para guardar os vertices de triangulos
 struct Coords
 {
 	float xx;
@@ -37,7 +38,6 @@ float raio = 7.5;
 //float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ;
 
 //no need to change
-
 void processKeys(unsigned char c, int xx, int yy) {
 
 	// put code to process regular keys in here
@@ -145,7 +145,7 @@ void renderScene(void) {
 	glutSwapBuffers();
 }
 
-
+//funçao que vai ler os ficheiros .3d e desenhar as figuras
 void readFile(string fname) {
 	string line;
 	ifstream file(fname);
@@ -176,6 +176,9 @@ void readFile(string fname) {
 	}
 	file.close();
 }
+
+//funçao que vai ler o ficheiro XML e extrair informação sobre a camara, assim como
+//quais os ficheiros 3d a ler
 
 /*
 int readXML(char* f) {
