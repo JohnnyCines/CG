@@ -46,21 +46,22 @@ void plano(float length, float divisions, char* fname) {
     fclose(f);
 }
 
+
 void caixa(float length, float divisions, char* fname) {
     FILE* f;
     fopen_s(&f, fname, "w");
 
     //diferen�a entre cada ponto
     float lq = length / divisions;
-
+    
     //ponto de partida nos extremos de y
     float x = -length / 2.0f;
     float z = length / 2.0f;
     float y = length / 2.0f;
-
+    
     //c�lculo dos tri�ngulos nas duas faces nos extremos de y
-    while (z != -length / 2) {
-        while (x != length / 2) {
+    while (z > -length / 2) {
+        while (x < length / 2) {
         //guardar tri�ngulos
             fprintf(f, "%f %f %f\n", x, y, z);
             fprintf(f, "%f %f %f\n", x + lq, y, z);
@@ -85,14 +86,15 @@ void caixa(float length, float divisions, char* fname) {
         z -= lq; //decrementar z para o pr�ximo ponto
     }
 
+    
     //ponto de partida nos extremos de z
     x = -length / 2;
     z = length / 2;
     y = length / 2;
 
     //c�lculo dos tri�ngulos nas duas faces nos extremos de z
-    while (y != -length / 2) {
-        while (x != length / 2) {
+    while (y > -length / 2) {
+        while (x < length / 2) {
             //guardar tri�ngulos
             fprintf(f, "%f %f %f\n", x, y, z);
             fprintf(f, "%f %f %f\n", x, y - lq, z);
@@ -116,7 +118,7 @@ void caixa(float length, float divisions, char* fname) {
         x = -length / 2; //reinicializar eixo dos x
         y -= lq; //incrementar y para o pr�ximo ponto
     }
-
+   
     //ponto de partida nos extremos de x
     x = length / 2;
     z = length / 2;
@@ -124,8 +126,8 @@ void caixa(float length, float divisions, char* fname) {
 
     //c�lculo dos tri�ngulos nas duas faces nos extremos de x
 
-    while (y != -length / 2) {
-        while (z != -length / 2) {
+    while (y > -length / 2.0f) {
+        while (z > -length / 2.0f) {
             //guardar tri�ngulos
             fprintf(f, "%f %f %f\n", x, y, z);
             fprintf(f, "%f %f %f\n", x, y-lq, z);
@@ -142,13 +144,14 @@ void caixa(float length, float divisions, char* fname) {
 
             fprintf(f, "%f %f %f\n", -x, y, z);
             fprintf(f, "%f %f %f\n", -x, y, z-lq);
-            fprintf(f, "%f %f %f\n", x, y - lq, z - lq);
+            fprintf(f, "%f %f %f\n", -x, y - lq, z - lq);
 
             z -= lq; //decrementar z para o pr�ximo ponto
         }
         z = length / 2; //reinicializar eixo do z
         y -= lq; //decrementar y para o pr�ximo ponto
     }
+    
     fclose(f);
 }
 
@@ -180,17 +183,9 @@ void esfera(float r, int slices, int stacks, char* fname) {
             pz3 = r * cos(b + st) * cos(a);
             pz4 = r * cos(b + st) * cos(a + sl);
 
-            //glVertex3f(r * cos(b) * sin(a), r * sin(b), r * cos(b) * cos(a));
-            //glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
-            //glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
-
             fprintf(f, "%f %f %f\n", px1, py1, pz1);
             fprintf(f, "%f %f %f\n", px2, py1, pz2);
             fprintf(f, "%f %f %f\n", px3, py2, pz3);
-
-            //glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
-            //glVertex3f(r * cos(b + st) * sin(a + sl), r * sin(b + st), r * cos(b + st) * cos(a + sl));
-            //glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
 
             fprintf(f, "%f %f %f\n", px2, py1, pz2);
             fprintf(f, "%f %f %f\n", px4, py2, pz4);
@@ -259,68 +254,74 @@ void cone(float radius, float height, int slices, int stacks, char* fname) {
 
 }
 
-void cone(float radius, float height, int slices, int stacks){
-    float alfa =  0.0;
-    float beta,newheight;
-    //distância ângular de cada ponto nos eixos xz
-    float alfastep = 2*M_PI/slices;
-    //diferença de raio entre cada stack
-    float betastep = radius/stacks;
-    //distância entre cada ponto no eixo y
-    float newheightstep = height/stacks;
-    File * f = fopen(fname, "w");
+/*
+
+void cone(float radius, float height, int slices, int stacks, char* fname) {
+
+    FILE* f;
+    fopen_s(&f, fname, "w");
+
+    float alfa = 0.0;
+    float beta, newheight;
+    //dist�ncia �ngular de cada ponto nos eixos xz
+    float alfastep = 2 * M_PI / slices;
+    //diferen�a de raio entre cada stack
+    float betastep = radius / stacks;
+    //dist�ncia entre cada ponto no eixo y
+    float newheightstep = height / stacks;
     //coordenadas polares
-    float px1,py1,pz1,px2,py2,pz2,px3,py3,pz3,px4,py4,pz4;
+    float px1, py1, pz1, px2, py2, pz2, px3, py3, pz3, px4, py4, pz4;
 
     int slice, stack;
-    for(slice=0; slice<slices++;slice++){
+    for (slice = 0; slice < slices++; slice++) {
         //coordenadas da base
         px1 = radius * sin(alfa);
         pz1 = radius * cos(alfa);
 
-        px2 = radius * sin(alfa+alfastep);
-        pz2 = radius * cos(alfa+alfastep);
+        px2 = radius * sin(alfa + alfastep);
+        pz2 = radius * cos(alfa + alfastep);
 
-        //triângulo da base
-        fprintf(f, "%f %f %f",0.0,-height/2,0.0);
-        fprintf(f, "%f %f %f",px1,y1,pz1);
-        fprintf(f, "%f %f %f",px2,y1,pz2);
-        
+        //tri�ngulo da base
+        fprintf(f, "%f %f %f\n", 0.0, 0.0, 0.0);
+        fprintf(f, "%f %f %f\n", px1, 0.0, pz1);
+        fprintf(f, "%f %f %f\n", px2, 0.0, pz2);
+
         beta = radius;
-        newheight = 0.0
+        newheight = 0.0;
 
-        for(stack=0;stack<stacks;stack++){
-            //coordenadas da face lateral 
-            px1 = beta * sin(alfa);
-            py1 = newheight; 
-            pz1 = beta * cos(alfa);
+            for (stack = 0; stack < stacks; stack++) {
+                //coordenadas da face lateral 
+                px1 = beta * sin(alfa);
+                py1 = newheight;
+                pz1 = beta * cos(alfa);
 
-            px2 = beta * sin(alfa+alfastep);
-            py2 = newheight;
-            pz2 = beta * cos(alfa+alfastep);
-            
-            beta -= betasetp;
-            newheight += newheightstep;
+                px2 = beta * sin(alfa + alfastep);
+                py2 = newheight;
+                pz2 = beta * cos(alfa + alfastep);
 
-            px3 = beta * sin(alfa);
-            py3 = newheight;
-            pz3 = beta * cos(alfa);
+                beta -= betastep;
+                newheight += newheightstep;
 
-            px4 = beta  * sin(alfa+alfastep);
-            py4 = newheight;
-            pz4 = beta * cos(alfa+alfastep);
+                px3 = beta * sin(alfa);
+                py3 = newheight;
+                pz3 = beta * cos(alfa);
 
-            //triângulos da face lateral
-            fprintf(f, "%f %f %f",px1,py1,pz1);
-            fprintf(f, "%f %f %f",px2,py2,pz2);
-            fprintf(f, "%f %f %f",px3,py3,pz3);
+                px4 = beta * sin(alfa + alfastep);
+                py4 = newheight;
+                pz4 = beta * cos(alfa + alfastep);
 
-            fprintf(f, "%f %f %f",px4,py4,pz4);
-            fprintf(f, "%f %f %f",px3,py3,pz3);
-            fprintf(f, "%f %f %f",px2,py2,pz2);
+                //tri�ngulos da face lateral
+                fprintf(f, "%f %f %f\n", px1, py1, pz1);
+                fprintf(f, "%f %f %f\n", px2, py2, pz2);
+                fprintf(f, "%f %f %f\n", px3, py3, pz3);
 
-        }
-        alfa+=alfastep;
+                fprintf(f, "%f %f %f\n", px4, py4, pz4);
+                fprintf(f, "%f %f %f\n", px3, py3, pz3);
+                fprintf(f, "%f %f %f\n", px2, py2, pz2);
+
+            }
+        alfa += alfastep;
     }
     fclose(f);
 }
+*/
