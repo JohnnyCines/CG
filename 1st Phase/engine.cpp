@@ -29,9 +29,9 @@ struct Coords
 
 vector<Coords> triangles;
 
-float alpha = 0.25;
-float beta = 0.5;
-float raio = 7.5;
+float alfa;
+float beta;
+float raio;
 
 float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ, fov, near, far;
 
@@ -48,7 +48,7 @@ void processKeys(unsigned char c, int xx, int yy) {
 		break;
 
 	case 'a':
-		alpha -= 0.2f;
+		alfa -= 0.2f;
 		glutPostRedisplay();
 		break;
 
@@ -60,12 +60,11 @@ void processKeys(unsigned char c, int xx, int yy) {
 		break;
 
 	case 'd':
-		alpha += 0.2f;
+		alfa += 0.2f;
 		glutPostRedisplay();
 		break;
 
 	}
-
 }
 
 void changeSize(int w, int h) {
@@ -126,8 +125,8 @@ void renderScene(void) {
 				0.0f, 1.0f, 0.0f);
 	*/
 	
-	camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
-	//drawAxis();
+	camera(raio*cos(beta)*sin(alfa), raio*sin(beta), raio * cos(beta) * cos(alfa), lookX, lookY, lookZ, upX, upY, upZ);
+	drawAxis();
 
 	glBegin(GL_TRIANGLES);
 
@@ -209,6 +208,11 @@ void readXML(const char* file) {
 		fov = atof(pProjection->Attribute("fov"));
 		near = atof(pProjection->Attribute("near"));
 		far = atof(pProjection->Attribute("far"));
+
+		raio = sqrtf(powf(posX,2) + powf(posY,2) + powf(posZ,2));
+		beta = asin(posY / raio);
+		alfa = asin(posX / (raio * cos(beta)));
+
 	}
 	XMLElement* pGroup = pRootElement->FirstChildElement("group");
 	if (pGroup != NULL) {
