@@ -35,6 +35,8 @@ void plano(float length, float divisions, char* fname) {
             fprintf(f, "%f %f %f\n", x, 0.0, z - lq);
             fprintf(f, "%f %f %f\n", x + lq, 0.0, z-lq);
 
+
+
             x += lq; //incrementar x para o pr�ximo ponto
         }
         x = -length / 2; //reinicializar eixo dos x
@@ -178,10 +180,18 @@ void esfera(float r, int slices, int stacks, char* fname) {
             pz3 = r * cos(b + st) * cos(a);
             pz4 = r * cos(b + st) * cos(a + sl);
 
+            //glVertex3f(r * cos(b) * sin(a), r * sin(b), r * cos(b) * cos(a));
+            //glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
+            //glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
+
             fprintf(f, "%f %f %f\n", px1, py1, pz1);
             fprintf(f, "%f %f %f\n", px2, py1, pz2);
             fprintf(f, "%f %f %f\n", px3, py2, pz3);
-            
+
+            //glVertex3f(r * cos(b) * sin(a + sl), r * sin(b), r * cos(b) * cos(a + sl));
+            //glVertex3f(r * cos(b + st) * sin(a + sl), r * sin(b + st), r * cos(b + st) * cos(a + sl));
+            //glVertex3f(r * cos(b + st) * sin(a), r * sin(b + st), r * cos(b + st) * cos(a));
+
             fprintf(f, "%f %f %f\n", px2, py1, pz2);
             fprintf(f, "%f %f %f\n", px4, py2, pz4);
             fprintf(f, "%f %f %f\n", px3, py2, pz3);
@@ -190,6 +200,63 @@ void esfera(float r, int slices, int stacks, char* fname) {
     }
 
     fclose(f);
+}
+
+
+void cone(float radius, float height, int slices, int stacks, char* fname) {
+    FILE* f;
+    fopen_s(&f, fname, "w");
+
+    float sl = 2 * M_PI / float(slices);
+    float st = radius / float(stacks);
+    float alt = height / float(stacks);
+
+	float a, b;
+
+	for (a = 0; a <= 2 * M_PI; a += sl) {
+		//face de baixo
+        float xb1 = radius * sin(a + sl);
+        float zb1 = radius * cos(a + sl);
+
+        float xb2 = radius * sin(a);
+        float zb2 = radius * cos(a);
+
+        fprintf(f,"%f %f %f\n",0.0,0.0,0.0);
+        fprintf(f,"%f %f %f\n",xb1,0.0,zb1);
+        fprintf(f,"%f %f %f\n",xb2,0.0,zb2);
+
+
+		float aux = 0.0f;
+		for (b = float(radius); b > st; b -= st) {
+
+            float x1 = b * sin(a);
+            float x2 = b * sin(a + sl);
+            float x3 = (b - st) * sin(a);
+            float x4 = (b - st) * sin(a + sl);
+
+            float z1 = b * cos(a);
+            float z2 = b * cos(a + sl);
+            float z3 = (b - st) * cos(a);
+            float z4 = (b - st) * cos(a + sl);
+
+            fprintf(f,"%f %f %f\n",x1,aux,z1);
+            fprintf(f,"%f %f %f\n",x2,aux,z2);
+            fprintf(f,"%f %f %f\n",x3,aux+alt,z3);
+
+            fprintf(f,"%f %f %f\n",x2,aux,z2);
+            fprintf(f,"%f %f %f\n",x4,aux+alt,z4);
+            fprintf(f,"%f %f %f\n",x3,aux+alt,z3);
+
+			aux += alt;
+		}
+
+        fprintf(f,"%f %f %f\n",0.0,height,0.0);
+        fprintf(f,"%f %f %f\n",xb2,0.0,zb2);
+        fprintf(f,"%f %f %f\n",xb1,0.0,zb1);
+
+	}
+    fclose(f);
+
 }
 
 void cone(float radius, float height, int slices, int stacks){
