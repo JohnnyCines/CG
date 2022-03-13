@@ -24,7 +24,8 @@ int main(int argc, char** argv) {
             return 0;
         }
         printf("Plane file created!");
-        plano(atof(argv[2]), atof(argv[3]), file);
+        float unit = 10.0f * atof(argv[2]);
+        plano(unit, atof(argv[3]), file);
     }
 
     if (strcmp(shape, "box") == 0) { //generator box 2 3 box.3d
@@ -44,6 +45,15 @@ int main(int argc, char** argv) {
         printf("Sphere file created!");
         esfera(atof(argv[2]), atoi(argv[3]), atoi(argv[4]), file);
     }
-      
+
+    if (strcmp(shape, "cone") == 0) { //generator cone 1 2 4 3 cone.3d
+        if (argc != 7) {
+            printf("Number of parameters wrong!");
+                return 0;
+        }
+        printf("Cone file created!");
+        cone(atof(argv[2]), atof(argv[3]), atoi(argv[4]), atoi(argv[5]), file);
+    }
+
     return 0;
 }
