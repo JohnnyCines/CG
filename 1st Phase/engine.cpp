@@ -1,4 +1,4 @@
-//#include <stdlib.h>
+#include <stdlib.h>
 #ifdef __APPLE__
 #include <GLUT/glut.h>
 #else
@@ -11,13 +11,11 @@
 #include <fstream>
 #include <iostream>
 
-/*
 #include "tinyxml/tinyxml2.h"
-#include "tinyxml/tinyxml2.cpp"
-*/
+
 
 using namespace std;
-//using namespace tinyxml2;
+using namespace tinyxml2;
 using std::vector;
 
 //struct para guardar os vertices de triangulos
@@ -35,7 +33,7 @@ float alpha = 0.25;
 float beta = 0.5;
 float raio = 7.5;
 
-//float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ;
+float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ, fov, near, far;
 
 //no need to change
 void processKeys(unsigned char c, int xx, int yy) {
@@ -70,7 +68,6 @@ void processKeys(unsigned char c, int xx, int yy) {
 
 }
 
-
 void changeSize(int w, int h) {
 
 	if(h == 0)
@@ -81,7 +78,7 @@ void changeSize(int w, int h) {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
     glViewport(0, 0, w, h);
-	gluPerspective(45.0f ,ratio, 1.0f ,1000.0f);
+	gluPerspective(fov ,ratio, near ,far);
 	glMatrixMode(GL_MODELVIEW);
 }
 
@@ -108,7 +105,6 @@ void drawAxis() {
 	glEnd();
 }
 
-
 void camera(float pX, float pY, float pZ, float lX, float lY, float lZ, float uX, float uY, float uZ) {
 	gluLookAt(pX, pY, pZ,
 				lX, lY, lZ,
@@ -124,15 +120,16 @@ void renderScene(void) {
 	// set the camera
 	glLoadIdentity();
 	
+	/*
 	gluLookAt(raio * cos(beta) * sin(alpha), raio * sin(beta), raio * cos(beta) * cos(alpha),
 				0.0, 0.0, 0.0,
 				0.0f, 1.0f, 0.0f);
+	*/
 	
-	//camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
+	camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
 	//drawAxis();
 
 	glBegin(GL_TRIANGLES);
-
 
 	for (int i = 0; i < triangles.size(); i += 3) {
 		glColor3f(1.0f, 1.0f, 1.0f);
@@ -142,11 +139,12 @@ void renderScene(void) {
 	}
 
 	glEnd();
+	
 	glutSwapBuffers();
 }
 
 //funçao que vai ler os ficheiros .3d e desenhar as figuras
-void readFile(string fname) {
+void readFile(const char* fname) {
 	string line;
 	ifstream file(fname);
 
@@ -180,123 +178,72 @@ void readFile(string fname) {
 //funçao que vai ler o ficheiro XML e extrair informação sobre a camara, assim como
 //quais os ficheiros 3d a ler
 
-/*
-int readXML(char* f) {
+void readXML(const char* file) {
+	//const char* path = "C:\Users\pires\Desktop\Phase 1\code";
 	XMLDocument doc;
+	doc.LoadFile(file);
 
-	XMLError eResult = doc.LoadFile(f);
+	XMLElement* pRootElement = doc.FirstChildElement("world");
 
-	XMLNode* root = doc.FirstChild();
-
-	if (strcmp("world", root->Value()) != 0) {
-		printf("Esperado valor 'world', obtido %s\n", root->Value());
-		return 1;
+	//cout << " Root Element is : " << pRootElement->Value();
+	if (pRootElement == nullptr){
+		cout << "Root empty";
+		return;
 	}
 
-	if (root==nullptr) {
-		printf("Não há dados\n");
-		return 1;
+	XMLElement* pCamara = pRootElement->FirstChildElement("camera");
+	if (pCamara != NULL) {
+		XMLElement* pPosition = pCamara->FirstChildElement("position");
+		posX = atof(pPosition->Attribute("x"));
+		posY = atof(pPosition->Attribute("y"));
+		posZ = atof(pPosition->Attribute("z"));
+		XMLElement* pLookAt = pCamara->FirstChildElement("lookAt");
+		lookX = atof(pLookAt->Attribute("x"));
+		lookY = atof(pLookAt->Attribute("y"));
+		lookZ = atof(pLookAt->Attribute("z"));
+		XMLElement* pUp = pCamara->FirstChildElement("up");
+		upX = atof(pUp->Attribute("x"));
+		upY = atof(pUp->Attribute("y"));
+		upZ = atof(pUp->Attribute("z"));
+		XMLElement* pProjection = pCamara->FirstChildElement("projection");
+		fov = atof(pProjection->Attribute("fov"));
+		near = atof(pProjection->Attribute("near"));
+		far = atof(pProjection->Attribute("far"));
 	}
-
-	XMLNode* camera = root->FirstChildElement("camera");
-
-	if (strcmp("camera", camera->Value()) != 0) {
-		printf("Esperado valor 'camera', obtido %s\n", camera->Value());
-		return 1;
-	}
-
-	if (camera == nullptr) {
-		printf("Não há dados\n");
-		return 1;
-	}
-
-	XMLNode* setting = camera->FirstChildElement();
-
-	while (setting != nullptr) {
-
-		XMLElement *element = setting->ToElement();
-
-		if (strcmp("positon", setting->Value()) == 0){
-			posX = atof(element->Attribute("x"));
-			posY = atof(element->Attribute("y"));
-			posZ = atof(element->Attribute("z"));
+	XMLElement* pGroup = pRootElement->FirstChildElement("group");
+	if (pGroup != NULL) {
+		XMLElement* pModels = pGroup->FirstChildElement("models");
+		XMLElement* pModel = pModels->FirstChildElement("model");
+		for (; pModel != NULL; pModel = pModel->NextSiblingElement()) {
+			//char fullPath[100];
+			const char* ficheiro = pModel->Attribute("file");
+			//const char* path = "C:\Users\pires\Desktop\Phase 1\code";
+			//strcpy(fullPath, path);
+			//strcat(fullPath, file);
+			readFile(ficheiro);
 		}
-
-		if (strcmp("lookAt", setting->Value()) == 0) {
-			lookX = atof(element->Attribute("x"));
-			lookY = atof(element->Attribute("y"));
-			lookZ = atof(element->Attribute("z"));
-		}
-
-		if (strcmp("up", setting->Value()) == 0) {
-			upX = atof(element->Attribute("x"));
-			upY = atof(element->Attribute("y"));
-			upZ = atof(element->Attribute("z"));
-		}
-
-		setting = setting->NextSiblingElement();
 	}
+}
 
-	XMLNode* group = root->FirstChildElement("group");
-
-	if (strcmp("group", group->Value()) != 0) {
-		printf("Esperado valor 'group', obtido %s\n", group->Value());
-		return 1;
-	}
-
-	if (group == nullptr) {
-		printf("Não há dados\n");
-		return 1;
-	}
-
-	XMLNode* models = group->FirstChildElement("models");
-
-	if (strcmp("models", models->Value()) != 0) {
-		printf("Esperado valor 'models', obtido %s\n", models->Value());
-		return 1;
-	}
-
-	if (models == nullptr) {
-		printf("Não há dados\n");
-		return 1;
-	}
-
-	tinyxml2::XMLNode* model = models->FirstChildElement("model");
-
-	while (model != nullptr) {
-		tinyxml2::XMLElement* element = model->ToElement();
-
-		if (strcmp("model", model->Value()) != 0) {
-			printf("Esperado valor 'model', obtido %s\n", model->Value());
-			return 1;
-		}
-
-		string ficheiro = element->Attribute("file");
-		readFile(ficheiro);
-
-		model = model->NextSiblingElement();
-	}
-	return 0;
-}*/
 int main(int argc, char **argv) {
 
 // init GLUT and the window
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
 	glutInitWindowPosition(80,80);
-	glutInitWindowSize(1500,1000);
+	glutInitWindowSize(800,800);
 	glutCreateWindow("Engine - Phase 1");
 	
-	/*
-	if (argc != 3) {
+	
+	if (argc != 2) {
 		printf("Invalid input");
 		return 0;
 	}
 	else {
-		readFile(argv[1]);
-		//readFile(argv[2]);
+		readXML(argv[1]);
 	}
-	*/
+	
+
 // Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
