@@ -149,15 +149,9 @@ Group* readXML(const char * file) {
 	}
 
 	XMLElement* group = pRoot->FirstChildElement("group");
-	/*
-	for (XMLElement* element = group->FirstChildElement(); element; element = element->NextSiblingElement()) {
-		g = parseGroup(element);
-		scene->pushFilho(g);
-	}
-	*/
+	
 	g = parseGroup(group);
-	//scene->pushFilho(g);
-
+	
 	return g;
 }
 
@@ -282,12 +276,6 @@ void renderScene(void) {
 
 	// set the camera
 	glLoadIdentity();
-	
-	/*
-	gluLookAt(raio * cos(beta) * sin(alpha), raio * sin(beta), raio * cos(beta) * cos(alpha),
-				0.0, 0.0, 0.0,
-				0.0f, 1.0f, 0.0f);
-	*/
 	
 	//camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
 	camera(raio*cos(beta)*sin(alfa), raio*sin(beta), raio * cos(beta) * cos(alfa), lookX, lookY, lookZ, upX, upY, upZ);
