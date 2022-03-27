@@ -20,7 +20,6 @@ using std::vector;
 
 Group* scene = new Group();
 
-//struct para guardar os vertices de triangulos
 
 float alfa;
 float beta;
@@ -28,7 +27,7 @@ float raio;
 
 float posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ, fov, near, far;
 
-vector<Vertice*> parseFile(string fname) {
+vector<Vertice*> readFile(string fname) {
 	string line;
 	ifstream file(fname);
 	vector<Vertice*> vertices;
@@ -58,7 +57,7 @@ vector<Vertice*> parseFile(string fname) {
 	return vertices;
 }
 
-Group* parseGroup(XMLElement* element) {
+Group* readGroup(XMLElement* element) {
 	Group* g = new Group();
 
 	for (element = element->FirstChildElement(); element; element = element->NextSiblingElement()) {
@@ -101,14 +100,14 @@ Group* parseGroup(XMLElement* element) {
 			XMLElement* elementChild;
 			for (elementChild = element->FirstChildElement(); elementChild; elementChild = elementChild->NextSiblingElement()) {
 				string ficheiro = elementChild->Attribute("file");
-				Model* m = new Model(parseFile(ficheiro));
+				Model* m = new Model(readFile(ficheiro));
 
 				g->pushModel(m);
 			}
 		}
 
 		if (strcmp(element->Value(), "group") == 0) {
-			Group* child = parseGroup(element);
+			Group* child = readGroup(element);
 			g->pushFilho(child);
 		}
 	}
@@ -119,7 +118,6 @@ Group* readXML(const char * file) {
 	XMLDocument doc;
 	doc.LoadFile(file);
 	Group* g = new Group();
-	//Group* scene = new Group;
 
 	XMLElement* pRoot = doc.FirstChildElement("world");
 
@@ -150,8 +148,8 @@ Group* readXML(const char * file) {
 
 	XMLElement* group = pRoot->FirstChildElement("group");
 	
-	g = parseGroup(group);
-	
+	g = readGroup(group);
+
 	return g;
 }
 
@@ -236,7 +234,6 @@ void renderGroup(Group* g) {
 
 	for (Operacoes* op : g->getOps()) {
 		if (strcmp(op->getName(), "translate") == 0) {
-			//printf("%f %f %f\n", op->getX(), op->getY(), op->getZ());
 			glTranslatef(op->getX(), op->getY(), op->getZ());
 		}
 		if (strcmp(op->getName(), "rotate") == 0) {
@@ -277,6 +274,12 @@ void renderScene(void) {
 	// set the camera
 	glLoadIdentity();
 	
+	/*
+	gluLookAt(raio * cos(beta) * sin(alpha), raio * sin(beta), raio * cos(beta) * cos(alpha),
+				0.0, 0.0, 0.0,
+				0.0f, 1.0f, 0.0f);
+	*/
+	
 	//camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
 	camera(raio*cos(beta)*sin(alfa), raio*sin(beta), raio * cos(beta) * cos(alfa), lookX, lookY, lookZ, upX, upY, upZ);
 	drawAxis();
@@ -296,7 +299,7 @@ int main(int argc, char **argv) {
 	glutInitDisplayMode(GLUT_DEPTH|GLUT_DOUBLE|GLUT_RGBA);
 	glutInitWindowPosition(80,80);
 	glutInitWindowSize(800,800);
-	glutCreateWindow("Engine - Phase 1");
+	glutCreateWindow("Engine - Phase 2");
 	
 	
 	if (argc != 2) {
@@ -310,7 +313,6 @@ int main(int argc, char **argv) {
 // Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
-
 	glutKeyboardFunc(processKeys);
 
 //  OpenGL settings
