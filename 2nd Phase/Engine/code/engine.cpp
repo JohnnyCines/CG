@@ -159,26 +159,32 @@ void processKeys(unsigned char c, int xx, int yy) {
 	// put code to process regular keys in here
 	switch (c) {
 	case 'w':
-		if (beta < 1.5f) {
-			beta += 0.25f;
+		beta += 0.25f;
+		if (beta > 1.5f) {
+			beta = 1.5f;
 		}
+		//printf("%f %f %f\n", raio * cos(beta) * sin(alfa), raio * sin(beta), raio * cos(beta) * cos(alfa));
 		glutPostRedisplay();
 		break;
 
 	case 'a':
 		alfa -= 0.2f;
+		//printf("%f %f %f\n", raio * cos(beta) * sin(alfa), raio * sin(beta), raio * cos(beta) * cos(alfa));
 		glutPostRedisplay();
 		break;
 
 	case 's':
-		if (beta > -1.5f) {
-			beta -= 0.25f;
+		beta -= 0.25f;
+		if (beta < -1.5f) {
+			beta = -1.5f;
 		}
+		//printf("%f %f %f\n", raio * cos(beta) * sin(alfa), raio * sin(beta), raio * cos(beta) * cos(alfa));
 		glutPostRedisplay();
 		break;
 
 	case 'd':
 		alfa += 0.2f;
+		//printf("%f %f %f\n", raio * cos(beta) * sin(alfa), raio * sin(beta), raio * cos(beta) * cos(alfa));
 		glutPostRedisplay();
 		break;
 
@@ -280,8 +286,8 @@ void renderScene(void) {
 				0.0f, 1.0f, 0.0f);
 	*/
 	
-	//camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
-	camera(raio*cos(beta)*sin(alfa), raio*sin(beta), raio * cos(beta) * cos(alfa), lookX, lookY, lookZ, upX, upY, upZ);
+	camera(posX, posY, posZ, lookX, lookY, lookZ, upX, upY, upZ);
+	//camera(raio*cos(beta)*sin(alfa), raio*sin(beta), raio * cos(beta) * cos(alfa), lookX, lookY, lookZ, upX, upY, upZ);
 	drawAxis();
 
 	renderGroup(scene);
@@ -313,7 +319,7 @@ int main(int argc, char **argv) {
 // Required callback registry 
 	glutDisplayFunc(renderScene);
 	glutReshapeFunc(changeSize);
-	glutKeyboardFunc(processKeys);
+	//glutKeyboardFunc(processKeys);
 
 //  OpenGL settings
 	glEnable(GL_DEPTH_TEST);
