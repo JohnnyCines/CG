@@ -1,0 +1,100 @@
+<world>
+	<camera> 
+	    <position x="-186" y="10" z="-166" />
+	    <lookAt x="0" y="0" z="0" />
+	    <up x="0" y="1" z="0" /> <!-- optional, use these values as default-->
+        <projection fov="60" near="1" far="10000" /> <!-- optional, use these values as default-->
+    </camera>
+
+    <group>
+    	<group> <!-- sol -->
+    		<transform>
+    			<translate x="-210" y="0" z="0" />
+    			<scale x="109" y="109" z="109" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- mercúrio -->
+    		<transform>
+    			<translate x="-63.4" y="0" z="0" />
+    			<scale x="0.4" y="0.4" z="0.4" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- venus -->
+    		<transform>
+    			<translate x="-29.9" y="0" z="0" />
+    			<scale x="0.9" y="0.9" z="0.9" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- terra -->
+    		<transform>
+    			<scale x="1.0" y="1.0" z="1.0" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- marte -->
+    		<transform>
+    			<translate x="51.5" y="0" z="0" />
+    			<scale x="0.5" y="0.5" z="0.5" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- jupiter -->
+    		<transform>
+    			<translate x="432" y="0" z="0" />
+    			<scale x="11" y="11" z="11" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- saturno -->
+    		<transform>
+    			<translate x="860" y="0" z="0" />
+    			<scale x="9" y="9" z="9" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- urano -->
+    		<transform>
+    			<translate x="1825" y="0" z="0" />
+    			<scale x="4" y="4" z="4" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+
+    	<group> <!-- neptuno -->
+    		<transform>
+    			<translate x="2914" y="0" z="0" />
+    			<scale x="3" y="3" z="3" />
+    		</transform>
+    		<models>
+    			<model file = "sphere.3d" />
+    		</models>
+    	</group>
+    </group>
+
+</world>
