@@ -250,23 +250,23 @@ void cone(float radius, float height, int slices, int stacks, char* fname) {
     float alt = height / float(stacks);
     float coneAngle = atan(radius / height);
 
-	float a, b;
+    float a, b;
 
-	for (a = 0; a <= 2 * M_PI; a += sl) {
-		//face de baixo
+    for (a = 0; a <= 2 * M_PI; a += sl) {
+        //face de baixo
         float xb1 = radius * sin(a + sl);
         float zb1 = radius * cos(a + sl);
 
         float xb2 = radius * sin(a);
         float zb2 = radius * cos(a);
 
-        fprintf(f,"%f %f %f %f %f %f\n", 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
-        fprintf(f,"%f %f %f %f %f %f\n", xb1, 0.0, zb1, 0.0, -1.0, 0.0);
-        fprintf(f,"%f %f %f %f %f %f\n", xb2, 0.0, zb2, 0.0, -1.0, 0.0);
+        fprintf(f, "%f %f %f %f %f %f\n", 0.0, 0.0, 0.0, 0.0, -1.0, 0.0);
+        fprintf(f, "%f %f %f %f %f %f\n", xb1, 0.0, zb1, 0.0, -1.0, 0.0);
+        fprintf(f, "%f %f %f %f %f %f\n", xb2, 0.0, zb2, 0.0, -1.0, 0.0);
 
 
-		float aux = 0.0f;
-		for (b = float(radius); b > st; b -= st) {
+        float aux = 0.0f;
+        for (b = float(radius); b > st; b -= st) {
 
             float x1 = b * sin(a);
             float x2 = b * sin(a + sl);
@@ -278,25 +278,25 @@ void cone(float radius, float height, int slices, int stacks, char* fname) {
             float z3 = (b - st) * cos(a);
             float z4 = (b - st) * cos(a + sl);
 
-            fprintf(f,"%f %f %f %f %f %f\n",x1,aux,z1, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
-            fprintf(f,"%f %f %f %f %f %f\n",x2,aux,z2, cos(coneAngle) * sin(a+sl), sin(coneAngle), cos(coneAngle) * cos(a+sl));
-            fprintf(f,"%f %f %f %f %f %f\n",x3,aux + alt,z3, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
+            fprintf(f, "%f %f %f %f %f %f\n", x1, aux, z1, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
+            fprintf(f, "%f %f %f %f %f %f\n", x2, aux, z2, cos(coneAngle) * sin(a + sl), sin(coneAngle), cos(coneAngle) * cos(a + sl));
+            fprintf(f, "%f %f %f %f %f %f\n", x3, aux + alt, z3, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
 
-            fprintf(f,"%f %f %f %f %f %f\n",x2,aux,z2, cos(coneAngle) * sin(a+sl), sin(coneAngle), cos(coneAngle) * cos(a+sl));
-            fprintf(f,"%f %f %f %f %f %f\n",x4,aux+alt,z4, cos(coneAngle) * sin(a+sl), sin(coneAngle), cos(coneAngle) * cos(a+sl));
-            fprintf(f,"%f %f %f %f %f %f\n",x3,aux+alt,z3, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
+            fprintf(f, "%f %f %f %f %f %f\n", x2, aux, z2, cos(coneAngle) * sin(a + sl), sin(coneAngle), cos(coneAngle) * cos(a + sl));
+            fprintf(f, "%f %f %f %f %f %f\n", x4, aux + alt, z4, cos(coneAngle) * sin(a + sl), sin(coneAngle), cos(coneAngle) * cos(a + sl));
+            fprintf(f, "%f %f %f %f %f %f\n", x3, aux + alt, z3, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
 
-			aux += alt;
-		}
+            aux += alt;
+        }
 
-        fprintf(f,"%f %f %f %f %f %f\n", 0.0, height, 0.0, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
-        fprintf(f,"%f %f %f %f %f %f\n", xb2, 0.0, zb2, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
-        fprintf(f,"%f %f %f %f %f %f\n", xb1, 0.0, zb1, cos(coneAngle) * sin(a+sl), sin(coneAngle), cos(coneAngle) * cos(a+sl));
+        fprintf(f, "%f %f %f %f %f %f\n", 0.0, height, 0.0, cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
+        fprintf(f, "%f %f %f %f %f %f\n", st * sin(a), aux, st * cos(a), cos(coneAngle) * sin(a), sin(coneAngle), cos(coneAngle) * cos(a));
+        fprintf(f, "%f %f %f %f %f %f\n", st * sin(a + sl), aux, st * cos(a + sl), cos(coneAngle) * sin(a + sl), sin(coneAngle), cos(coneAngle) * cos(a + sl));
 
-	}
+    }
     fclose(f);
-
 }
+
 
 
 void multMatrixVector(float* m, float* v, float* res) {
@@ -572,38 +572,45 @@ void bezier(const char* forigin, float tess, char* file) {
 
                 
                 cross(derVA, derUA, norA);
-                if (i == 20 && u == 0 && v == 0) {
-                    printf("%d %d %d\n", norA[0], norA[1], norA[2]);
-                }
                 normalize(norA);
+                norA[0] = norA[0] * (-1.0);
+                norA[1] = norA[1] * (-1.0);
+                norA[2] = norA[2] * (-1.0);
 
                 cross(derVB, derUB, norB);
                 normalize(norB);
+                norB[0] = norB[0] * (-1.0);
+                norB[1] = norB[1] * (-1.0);
+                norB[2] = norB[2] * (-1.0);
 
                 cross(derVC, derUC, norC);
                 normalize(norC);
+                norC[0] = norC[0] * (-1.0);
+                norC[1] = norC[1] * (-1.0);
+                norC[2] = norC[2] * (-1.0);
 
                 cross(derVD, derUD, norD);
                 normalize(norD);
-
-                
+                norD[0] = norD[0] * (-1.0);
+                norD[1] = norD[1] * (-1.0);
+                norD[2] = norD[2] * (-1.0);
 
                 fprintf(fout, "%f %f %f %f %f %f\n", posA[0], posA[1], posA[2], norA[0], norA[1], norA[2]);
                 fprintf(fout, "%f %f %f %f %f %f\n", posC[0], posC[1], posC[2], norC[0], norC[1], norC[2]);
-                fprintf(fout, "%f %f %f %f %f %f\n", posD[0], posD[1], posD[2], norD[0], norD[1], norD[2]);
-
-                fprintf(fout, "%f %f %f %f %f %f\n", posA[0], posA[1], posA[2], norA[0], norA[1], norA[2]);
-                fprintf(fout, "%f %f %f %f %f %f\n", posD[0], posD[1], posD[2], norD[0], norD[1], norD[2]);
                 fprintf(fout, "%f %f %f %f %f %f\n", posB[0], posB[1], posB[2], norB[0], norB[1], norB[2]);
 
+                fprintf(fout, "%f %f %f %f %f %f\n", posB[0], posB[1], posB[2], norB[0], norB[1], norB[2]);
+                fprintf(fout, "%f %f %f %f %f %f\n", posC[0], posC[1], posC[2], norC[0], norC[1], norC[2]);
+                fprintf(fout, "%f %f %f %f %f %f\n", posD[0], posD[1], posD[2], norD[0], norD[1], norD[2]);
+                
                 /*
                 fprintf(fout, "%f %f %f %f %f %f\n", posA[0], posA[1], posA[2], norA[0], norA[1], norA[2]);
-                fprintf(fout, "%f %f %f %f %f %f\n", posD[0], posD[1], posD[2], norD[0], norD[1], norD[2]);
+                fprintf(fout, "%f %f %f %f %f %f\n", posB[0], posB[1], posB[2], norB[0], norB[1], norB[2]);
                 fprintf(fout, "%f %f %f %f %f %f\n", posC[0], posC[1], posC[2], norC[0], norC[1], norC[2]);
 
-                fprintf(fout, "%f %f %f %f %f %f\n", posA[0], posA[1], posA[2], norA[0], norA[1], norA[2]);
                 fprintf(fout, "%f %f %f %f %f %f\n", posB[0], posB[1], posB[2], norB[0], norB[1], norB[2]);
                 fprintf(fout, "%f %f %f %f %f %f\n", posD[0], posD[1], posD[2], norD[0], norD[1], norD[2]);
+                fprintf(fout, "%f %f %f %f %f %f\n", posC[0], posC[1], posC[2], norC[0], norC[1], norC[2]);
                 */
 
                 free(posA);
